@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator with Memory</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(15, 34, 68);
+        }
+
+        .calculator {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: rgb(38, 125, 142);
+            box-shadow: 0 4px 8px rgba(72, 19, 85, 0.9);
+        }
+
+        .display {
+            width: 95%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-width: 1px ;
+            border-style: solid;
+            border-color:#ccc;
+            text-align: right;
+            font-size: 1.5em;
+        }
+
+        .buttons {
+            display: grid;
+            /* repeat(4, 1fr) */
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 5px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .button.operator{
+            background-color: lightblue;
+        }
+        .button.equals{
+            background-color: lightgreen;
+        }
+
+        .memory-tab {
+            margin-top: 20px;
+        }
+
+        .memory-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .memory-list li {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .memory-list li:last-child {
+            border-bottom: none;
+        }
+
+        .memory-list button {
+            background-color: #fdd;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <input type="text" class="display" id="display" value="0">
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('/')" class="operator">/</button>
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('*')" class="operator">*</button>
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="appendToDisplay('-')" class="operator">-</button>
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="calculate()" class="equals">=</button>
+            <button onclick="appendToDisplay('+')" class="operator">+</button>
+        </div>
+        <div class="memory-tab">
+            <h3>Memory</h3>
+            <ul class="memory-list" id="memoryList"></ul>
+            <button onclick="clearMemory()">Clear Memory</button>
+            <button onclick="storeMemory()">Store Current</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let memoryList = document.getElementById('memoryList');
+        let memory = [];
+        let currentExpression = "";
+
+        function appendToDisplay(value) {
+            if (display.value === '0') {
+                display.value = value;
+                currentExpression = value;
+            } else {
+                display.value += value;
+                currentExpression += value;
+            }
+        }
+
+        function clearDisplay() {
+            display.value = '0';
+            currentExpression = "";
+        }
+
+        function calculate() {
+            try {
+                const result = eval(display.value);
+                const fullExpression = currentExpression + " = " + result;
+                display.value = result;
+                currentExpression = String(result);
+                storeFullExpression(fullExpression);
+            } catch (error) {
+                display.value = 'Error';
+                currentExpression = "";
+            }
+        }
+
+        function storeFullExpression(expression) {
+            if (display.value !== 'Error') {
+                memory.push(expression);
+                updateMemoryList();
+            }
+        }
+
+        function storeMemory() {
+            if (display.value !== 'Error') {
+                memory.push(currentExpression);
+                updateMemoryList();
+            }
+        }
+
+        function clearMemory() {
+            memory = [];
+            updateMemoryList();
+        }
+
+        function updateMemoryList() {
+            memoryList.innerHTML = '';
+            memory.forEach((item, index) => {
+                let listItem = document.createElement('li');
+                listItem.textContent = item;
+                let deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.onclick = () => {
+                    memory.splice(index, 1);
+                    updateMemoryList();
+                };
+                listItem.appendChild(deleteButton);
+                memoryList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator with Memory</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .calculator {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .display {
+            width: 95%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: right;
+            font-size: 1.5em;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .button.operator{
+            background-color: lightblue;
+        }
+        .button.equals{
+            background-color: lightgreen;
+        }
+
+        .memory-tab {
+            margin-top: 20px;
+        }
+
+        .memory-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .memory-list li {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .memory-list li:last-child {
+            border-bottom: none;
+        }
+
+        .memory-list button {
+            background-color: #fdd;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <input type="text" class="display" id="display" value="0">
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('/')" class="operator">/</button>
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('*')" class="operator">*</button>
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="appendToDisplay('-')" class="operator">-</button>
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="calculate()" class="equals">=</button>
+            <button onclick="appendToDisplay('+')" class="operator">+</button>
+        </div>
+        <div class="memory-tab">
+            <h3>Memory</h3>
+            <ul class="memory-list" id="memoryList"></ul>
+            <button onclick="clearMemory()">Clear Memory</button>
+            <button onclick="storeMemory()">Store Current</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let memoryList = document.getElementById('memoryList');
+        let memory = [];
+        let currentExpression = "";
+
+        function appendToDisplay(value) {
+            if (display.value === '0') {
+                display.value = value;
+                currentExpression = value;
+            } else {
+                display.value += value;
+                currentExpression += value;
+            }
+        }
+
+        function clearDisplay() {
+            display.value = '0';
+            currentExpression = "";
+        }
+
+        function calculate() {
+            try {
+                const result = eval(display.value);
+                const fullExpression = currentExpression + " = " + result;
+                display.value = result;
+                currentExpression = String(result);
+                storeFullExpression(fullExpression);
+            } catch (error) {
+                display.value = 'Error';
+                currentExpression = "";
+            }
+        }
+
+        function storeFullExpression(expression) {
+            if (display.value !== 'Error') {
+                memory.push(expression);
+                updateMemoryList();
+            }
+        }
+
+        function storeMemory() {
+            if (display.value !== 'Error') {
+                memory.push(currentExpression);
+                updateMemoryList();
+            }
+        }
+
+        function clearMemory() {
+            memory = [];
+            updateMemoryList();
+        }
+
+        function updateMemoryList() {
+            memoryList.innerHTML = '';
+            memory.forEach((item, index) => {
+                let listItem = document.createElement('li');
+                listItem.textContent = item;
+                let deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.onclick = () => {
+                    memory.splice(index, 1);
+                    updateMemoryList();
+                };
+                listItem.appendChild(deleteButton);
+                memoryList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
+-->
